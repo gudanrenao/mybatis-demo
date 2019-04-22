@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangwenit.mybatis.demo.mapper.example.PersonMapper">
+
+    <!--开启缓存 缓存只作用于 cache 标签所在的映射文件中的语句-->
+    <!--<cache/>-->
+    <!--想要在多个命名空间中共享相同的缓存配置和实例。要实现这种需求，你可以使用 cache-ref 元素来引用另一个缓存-->
+    <!--<cache-ref namespace="com.someone.application.data.SomeMapper"/>-->
+    <!--这个更高级的配置创建了一个 FIFO 缓存，每隔 60 秒刷新，最多可以存储结果对象或列表的 512 个引用，而且返回的对象被认为是只读的，因此对它们进行修改可能会在不同线程中的调用者产生冲突。-->
+    <!--可用的清除策略有：-->
+    <!--LRU – 最近最少使用：移除最长时间不被使用的对象。-->
+    <!--FIFO – 先进先出：按对象进入缓存的顺序来移除它们。-->
+    <!--SOFT – 软引用：基于垃圾回收器状态和软引用规则移除对象。-->
+    <!--WEAK – 弱引用：更积极地基于垃圾收集器状态和弱引用规则移除对象-->
+    <cache eviction="FIFO" flushInterval="60000" size="512" readOnly="true"/>
+
+    <!--flushCache:	将其设置为 true 后，只要语句被调用，都会导致本地缓存和二级缓存被清空，默认值：false-->
+    <!--useCache:	将其设置为 true 后，将会导致本条语句的结果被二级缓存缓存起来，默认值：对 select 元素为 true-->
+    <!--todo statementType:	STATEMENT，PREPARED 或 CALLABLE 中的一个。这会让 MyBatis 分别使用 Statement，PreparedStatement 或 CallableStatement，默认值：PREPARED-->
+    <!--databaseId:	如果配置了数据库厂商标识（databaseIdProvider），MyBatis 会加载所有的不带 databaseId 或匹配当前 databaseId 的语句；如果带或者不带的语句都有，则不带的会被忽略-->
+    <!--timeout:	这个设置是在抛出异常之前，驱动程序等待数据库返回请求结果的秒数。默认值为未设置（unset）（依赖驱动）-->
+    <!--fetchSize:	这是一个给驱动的提示，尝试让驱动程序每次批量返回的结果行数和这个设置值相等。 默认值为未设置（unset）（依赖驱动）-->
+    <!--resultSetType:	FORWARD_ONLY，SCROLL_SENSITIVE, SCROLL_INSENSITIVE 或 DEFAULT（等价于 unset） 中的一个，默认值为 unset （依赖驱动）-->
+    <!--todo resultOrdered:	这个设置仅针对嵌套结果 select 语句适用：如果为 true，就是假设包含了嵌套结果集或是分组，这样的话当返回一个主结果行的时候，就不会发生有对前面结果集的引用的情况。 这就使得在获取嵌套的结果集的时候不至于导致内存不够用。默认值：false-->
+    <!--todo resultSets:	这个设置仅对多结果集的情况适用。它将列出语句执行后返回的结果集并给每个结果集一个名称，名称是逗号分隔的-->
+    <select id="selectPersonById"
+            resultType="person"
+            parameterType="long"
+            flushCache="true"
+            useCache="true"
+            statementType="PREPARED"
+            databaseId=""
+            timeout="5"
+            fetchSize="20"
+            resultSetType="FORWARD_ONLY"
+            resultOrdered="false"
+            resultSets="person"
+    >
+    select * from person where id = #{id}
+    </select>
+
+    <!--flushCache:	将其设置为 true 后，只要语句被调用，都会导致本地缓存和二级缓存被清空，默认值：true（对于 insert、update 和 delete 语句）-->
+    <!--timeout:	这个设置是在抛出异常之前，驱动程序等待数据库返回请求结果的秒数。默认值为未设置（unset）（依赖驱动）-->
+    <!--statementType:	STATEMENT，PREPARED 或 CALLABLE 中的一个。这会让 MyBatis 分别使用 Statement，PreparedStatement 或 CallableStatement，默认值：PREPARED-->
+    <!--todo useGeneratedKeys:	（仅对 insert 和 update 有用）这会令 MyBatis 使用 JDBC 的 getGeneratedKeys 方法来取出由数据库内部生成的主键（比如：像 MySQL 和 SQL Server 这样的关系数据库管理系统的自动递增字段），默认值：false-->
+    <!--todo keyProperty:	（仅对 insert 和 update 有用）唯一标记一个属性，MyBatis 会通过 getGeneratedKeys 的返回值或者通过 insert 语句的 selectKey 子元素设置它的键值，默认值：未设置（unset）。如果希望得到多个生成的列，也可以是逗号分隔的属性名称列表-->
+    <!--todo keyColumn:	（仅对 insert 和 update 有用）通过生成的键值设置表中的列名，这个设置仅在某些数据库（像 PostgreSQL）是必须的，当主键列不是表中的第一列的时候需要设置。如果希望使用多个生成的列，也可以设置为逗号分隔的属性名称列表-->
+    <!--databaseId:	如果配置了数据库厂商标识（databaseIdProvider），MyBatis 会加载所有的不带 databaseId 或匹配当前 databaseId 的语句；如果带或者不带的语句都有，则不带的会被忽略-->
+    <insert id="insertPersonDemo"
+            parameterType="person"
+            flushCache="true"
+            timeout="5"
+            statementType="PREPARED"
+            useGeneratedKeys="true"
+            keyProperty="id"
+            keyColumn="id"
+            databaseId=""
+    >
+
+    </insert>
+
+
+    <!--resultType使用了类型别名 typeAlias -->
+    <!--<select id="selecById" resultType="Person" parameterType="java.lang.Long">-->
+    <!--select * from person where id = #{id}-->
+    <!--</select>-->
+
+    <!--resultType使用了类型别名 typeAliases.package 和 @Alias-->
+    <!--<select id="selecById" resultType="person2" parameterType="java.lang.Long">-->
+    <!--select * from person where id = #{id}-->
+    <!--</select>-->
+
+    <!--resultType使用了类型别名 typeAliases.package -->
+    <select id="selectById" resultType="person" parameterType="long">
+    select * from person where id = #{id}
+    </select>
+
+    <!--构造方法 很少改变或基本不变的包含引用或数据的表，很适合使用不可变类 -->
+    <resultMap id="useConstructor" type="person">
+        <constructor>
+            <!-- arg属性select、resultMap用于参数为一个对象时的赋值 -->
+            <idArg column="id" javaType="long" jdbcType="BIGINT" name="id"/>
+            <arg column="name" name="name"/>
+            <arg column="sex" name="sex"/>
+        </constructor>
+    </resultMap>
+    <select id="selectByIdUseConstructor" resultMap="useConstructor">
+        select id,`name`,sex from person where id = #{id}
+    </select>
+
+    <!--关联的嵌套 Select 查询-->
+    <resultMap id="useAssociation" type="person">
+        <!--todo 为何没有懒加载？-->
+        <!--会产生N+1问题-->
+        <!--可以使用 column="{prop1=col1,prop2=col2}" 这样的语法来指定多个传递给嵌套 Select 查询语句的列名-->
+        <association property="personalInfo" javaType="personalInfo" column="personal_info_id"
+                     select="selectPersonInfoById" fetchType="lazy"/>
+    </resultMap>
+    <select id="selectPersonInfoById" resultType="personalInfo">
+      select  * from personal_info where id = #{id}
+    </select>
+    <select id="selectByIdUseAssociation" resultMap="useAssociation">
+        select id,`name`,personal_info_id from person where id = #{id}
+    </select>
+
+    <!--关联的嵌套结果映射 解决N+1问题，并且如果关联的嵌套映射用association.resultMap，可以复用resultMap-->
+    <resultMap id="useAssociationInnerResultMap" type="person">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <!--todo 为什么加了association内置resultMap后，没写的外层result(select中查询出来的)没有自动映射 个人认为是多表关联后需要些result，不然无法匹配字段-->
+        <!--<result column="sex" property="sex"/>-->
+        <association property="personalInfo" javaType="personalInfo" column="personal_info_id"
+                     resultMap="personalInfoInnerResultMap" columnPrefix="info_"/>
+        <!--下面这种和上面的association等价，如果不需要复用resultMap，可以直接将结果映射作为子元素嵌套在内-->
+        <!--<association property="personalInfo" javaType="personalInfo" columnPrefix="info_">-->
+        <!--<id column="id" property="id"/>-->
+        <!--<result column="age" property="age"/>-->
+        <!--<result column="alias" property="alias"/>-->
+        <!--</association>-->
+    </resultMap>
+    <resultMap id="personalInfoInnerResultMap" type="personalInfo">
+        <id column="id" property="id"/>
+        <result column="age" property="age"/>
+        <result column="alias" property="alias"/>
+    </resultMap>
+    <select id="selectByIdUseAssociationInnerResultMap" resultMap="useAssociationInnerResultMap">
+        select p.id,p.sex,p.`name` as `name`,i.id as info_id,i.age as info_age,i.alias as info_alias
+         from person p inner join personal_info i on p.personal_info_id = i.id where p.id = #{id}
+    </select>
+
+    <!--todo 关联的多结果集（ResultSet）待理解测试-->
+
+    <!--collection集合的嵌套 Select 查询-todo 为何lazy也没有生效 问题同 useAssociation-->
+    <resultMap id="personWithLogList" type="personDto">
+        <id column="id" property="id"/>
+        <collection property="logList" column="id" ofType="personLog" javaType="arraylist" select="selectListByPersonId"
+                    fetchType="lazy"/>
+    </resultMap>
+    <select id="selectListByPersonId" resultType="personLog">
+        select id,remark,person_id as personId from person_log where person_id = #{id}
+    </select>
+    <select id="selectPersonWithLogList" resultMap="personWithLogList">
+        select id,sex,`name`,color from person where id = #{id}
+    </select>
+
+    <!--collection集合的嵌套结果映射-->
+    <resultMap id="personWithInnerJoinLogList" type="personDto">
+        <id property="id" column="p_id"/>
+        <result property="sex" column="p_sex"/>
+        <result property="color" column="p_color"/>
+        <collection property="logList" ofType="personLog" resultMap="personLog" columnPrefix="l_"/>
+    </resultMap>
+    <resultMap id="personLog" type="personLog">
+        <id property="id" column="id"/>
+        <result property="remark" column="remark"/>
+        <result property="personId" column="person_id"/>
+    </resultMap>
+    <select id="selectPersonWithLogListUseInnerJoin" resultMap="personWithInnerJoinLogList">
+        SELECT p.id as p_id,p.sex as p_sex,p.color as p_color,p.`name` as p_name,
+         l.id as l_id,l.remark as l_remark,l.person_id as l_person_id
+         FROM person p INNER JOIN person_log l on p.id = l.person_id WHERE p.id = #{id}
+    </select>
+
+    <!--todo 集合的多结果集（ResultSet）待理解测试 -->
+
+    <!--使用resultMap，为了使用EnumOrdinalTypeHandler映射color2字段-->
+    <resultMap id="customPerson" type="person">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="sex" jdbcType="INTEGER" property="sex"/>
+        <result column="user" jdbcType="VARCHAR" property="user"/>
+        <result column="color" jdbcType="VARCHAR" property="color"/>
+        <result column="color2" jdbcType="INTEGER" property="color2"
+                typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <!--上面的字段映射，即使注释掉，依然会自动映射赋值，下面三个如果注释，就不会赋值，一个是因为列名和字段名不匹配，另外两个由于是属性内部字段-->
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <!--一个查询字段可以映射到多个属性上，可以使用点分的方式设置为对象类型属性的内部属性上-->
+        <result column="user_id" jdbcType="VARCHAR" property="user.id"/>
+        <result column="name2" jdbcType="VARCHAR" property="user.name2" javaType="string"/>
+        <association property="personalInfo" javaType="personalInfo" column="personal_info_id"
+                     select="selectPersonInfoById" fetchType="lazy"/>
+    </resultMap>
+    <select id="selectMapById" resultMap="customPerson" parameterType="long">
+    select * from person where id = #{id}
+    </select>
+
+    <!--鉴别器 discriminator 很像 Java 语言中的 switch 语句 -->
+    <!--如果case匹配到，那么结果集就是case对应的resultMap或resultType(和其他case以及父结果集是互斥的),如果一个没有匹配到，就使用父结果集-->
+    <!--如果case使用resultMap,对应的resultMap可以 extends 父结果集的type，这样可以实现子类父类的抽象赋值机制-->
+    <resultMap id="resultUseDiscriminator" type="personUseDiscriminatorDto">
+        <id column="id" property="id"/>
+        <result column="black_value" property="blackValue"/>
+        <discriminator javaType="com.zhangwenit.mybatis.demo.enums.ColorEnum" column="color">
+            <case value="RED" resultType="discriminatorSubDto1">
+                <result column="red_value" property="redValue"/>
+            </case>
+            <case value="BLACK" resultMap="discriminatorSubDto2Map"/>
+        </discriminator>
+    </resultMap>
+    <!--无论mybatis-config.xml设置的自动映射等级是哪种，你都可以通过在结果映射上设置 autoMapping 属性来为指定的结果映射设置启用/禁用自动映射-->
+    <resultMap id="discriminatorSubDto2Map" type="discriminatorSubDto2" extends="resultUseDiscriminator"
+               autoMapping="false">
+        <!--<result column="black_value" property="blackValue"/>-->
+    </resultMap>
+    <select id="selectUseDiscriminator" resultMap="resultUseDiscriminator">
+        select * from person where id = #{id}
+    </select>
+
+    <insert id="savePerson" parameterType="person">
+        <selectKey keyProperty="id" order="AFTER" resultType="long">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="user != null">
+                `user`,
+            </if>
+            <if test="color != null">
+                color,
+            </if>
+            <if test="color2 != null">
+                color2,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sex != null">
+                #{sex},
+            </if>
+            <if test="user != null">
+                #{user},
+            </if>
+            <if test="color != null">
+                #{color},
+            </if>
+            -- 使用EnumOrdinalTypeHandler映射
+            <if test="color2 != null">
+
+                #{color2,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+            </if>
+        </trim>
+    </insert>
+
+    <!--#{property,javaType=int,jdbcType=NUMERIC,typeHandler=Demo,,,numericScale=2=2}-->
+    <!--numericScale: 对于数值类型，指定小数点后保留的位数-->
+    <!--typeHandler: 指定类型转换器-->
+    <update id="updatePersonUser">
+        update person set `user` = #{user} where id = #{id}
+    </update>
+
+    <sql id="idAndName">
+        ${alias}.id as ${alias}Id,${alias}.`name` as ${alias}Name
+    </sql>
+
+    <select id="joinIdAndName" resultType="hashmap">
+        select
+        <include refid="idAndName">
+            <property name="alias" value="p"/>
+        </include>
+        ,
+        <include refid="idAndName">
+            <property name="alias" value="u"/>
+        </include>
+        from person p inner join `user` u on p.user_id = u.id
+    </select>
+
+    <!--todo numericScale设置后无效-->
+    <update id="updatePriceByNumericScale">
+        update person set price = #{price,numericScale=1} where id = #{id}
+    </update>
+
+    <!--${column} 会被直接替换，而 #{value} 会被使用 ? 预处理-->
+    <select id="selectOneByColumn" resultMap="customPerson">
+        select  * from person where ${column} = #{value}
+    </select>
+
+    <!--choose,when,otherwise-->
+    <select id="selectByCriteriaUseChoose" resultMap="customPerson" parameterType="personCriteria">
+        select * from person where
+        <choose>
+            <when test="sex != null">
+                sex = #{sex}
+            </when>
+            <when test="name != null">
+                `name` like #{name}
+            </when>
+            <otherwise>
+                `name` is not null
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--where : 若语句的开头为“AND”或“OR”，会自动去除 -->
+    <select id="selectByCriteriaUseWhere" resultMap="customPerson" parameterType="personCriteria">
+        select * from person
+        <where>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="name != null">
+                and `name` like #{name}
+            </if>
+        </where>
+    </select>
+    <!--where的同效果方案: <trim prefix="WHERE" prefixOverrides="AND |OR ">-->
+    <select id="selectByCriteriaUseTrimPrefix" resultMap="customPerson" parameterType="personCriteria">
+        select * from person
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="name != null">
+                and `name` like #{name}
+            </if>
+        </trim>
+    </select>
+
+    <!--set: 动态前置 SET 关键字，同时也会删掉无关的逗号-->
+    <update id="updatePersonUseSet" parameterType="person">
+        update person
+        <set>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="color != null">
+                color = #{color}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <!--set的同效果方案：<trim prefix="SET" suffixOverrides=",">-->
+    <update id="updatePersonUseTrimSuffix" parameterType="person">
+        update person
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="name != null">
+                `name` = #{name},
+            </if>
+            <if test="color != null">
+                color = #{color},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <!--foreach 迭代遍历 List Set Map 数组 等-->
+    <select id="selectByIdListUseForeach" resultMap="customPerson">
+        select * from person where id in
+        <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--bind:可以从 OGNL 表达式中创建一个变量并将其绑定到上下文 示例：like 给值前后加%-->
+    <select id="selectUseBind" resultMap="customPerson">
+        <bind name="nameLike" value="'%' + _parameter.getName() + '%'"/>
+        select * from person where `name` like #{nameLike}
+    </select>
+
+    <!--@MapKey:使用Map接收返回的多行结果，指定某一列作为key，行作为value，保存在map中-->
+    <select id="selectAllUseMap" resultMap="customPerson">
+        select * from person
+    </select>
+
+    <!--RowBounds: 分页 限制查询结果-->
+    <select id="selectUseRowBounds" resultMap="customPerson">
+        select * from person
+    </select>
+
+    <!--todo 多数据库支持 一个配置了“_databaseId”变量的 databaseIdProvider 可用于动态代码中，这样就可以根据不同的数据库厂商构建特定的语句-->
+    <!--<insert id="insert">-->
+    <!--<selectKey keyProperty="id" resultType="int" order="BEFORE">-->
+    <!--<if test="_databaseId == 'oracle'">-->
+    <!--select seq_users.nextval from dual-->
+    <!--</if>-->
+    <!--<if test="_databaseId == 'db2'">-->
+    <!--select nextval for seq_users from sysibm.sysdummy1"-->
+    <!--</if>-->
+    <!--</selectKey>-->
+    <!--insert into users values (#{id}, #{name})-->
+    <!--</insert>-->
+
+    <!--todo 动态 SQL 中的可插拔脚本语言 LanguageDriver <setting name="defaultScriptingLanguage" value="myLanguage"/>-->
+</mapper>
